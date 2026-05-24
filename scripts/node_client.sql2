@@ -1,0 +1,25 @@
+{%- import 'utils.jinja' as utils -%}
+
+SET http_proxy = '{{ http_proxy }}';
+
+LOAD quack;
+
+{#- Get coordination node -#}
+{{- utils.search_items(nodes, 'roles', 'm') -}}
+{%- set nodes_coord = utils.ns.response -%}
+{%- set node_coord = nodes_coord | first -%}
+
+CALL enable_logging(
+    ['HTTP', 'Quack'],
+    storage = 'file',
+    storage_path = '{{ base_path }}/logs/duckdb-log-client',
+    level = 'trace'
+);
+
+CREATE TEMPORARY SECRET (
+    TYPE quack,
+    SCOPE 'quack:localhost:{{ node_coord.port }}',
+    TOKEN '{{ token }}'
+);
+
+ATTACH 'quack:localhost:{{ node_coord.port }}' AS {{ node_coord.name }};

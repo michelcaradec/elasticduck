@@ -1,0 +1,12 @@
+{%- set ns = namespace(response = []) -%}
+
+{# Usage: #}
+{# {{- utils.search_items(collection, 'key_to_search', 'value_to_search') -}} #}
+{# {%- set response = utils.ns.response -%} #}
+
+{%- macro search_items(collection, key, value) -%}
+{%- set ns.response = [] -%}
+{%- for item in collection if value in item[key] -%}
+{%- set ns.response = ns.response + [item] -%}
+{%- endfor -%}
+{%- endmacro -%}

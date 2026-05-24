@@ -1,0 +1,46 @@
+{
+    "nodes": [
+        {
+            /* Warning: as the name is used for the attached database, it must follows the rules: */
+            /* - https://duckdb.org/docs/current/sql/dialect/keywords_and_identifiers#database-names */
+            /* - https://duckdb.org/docs/current/sql/dialect/keywords_and_identifiers#identifiers */
+            "name": "data_01",
+            "port": "9495",
+            "roles": "d",
+            /* Data node settings */
+            /* Warning: the name of the alias must be the same for ALL the nodes (data and coordination) */
+            "data_alias": "data",
+            "data_source_type": "csv",
+            "data_source": "iris.csv",
+            "partition": "species = 'setosa'"
+        },
+        {
+            "name": "data_02",
+            "port": "9496",
+            "roles": "d",
+            /* Data node settings */
+            "data_alias": "data",
+            "data_source_type": "csv",
+            "data_source": "iris.csv",
+            "partition": "species = 'versicolor'"
+        },
+        {
+            "name": "data_03",
+            "port": "9497",
+            "roles": "d",
+            /* Data node settings */
+            "data_alias": "data",
+            "data_source_type": "csv",
+            "data_source": "iris.csv",
+            "partition": "species = 'virginica'"
+        },
+        {
+            "name": "coord",
+            "port": "9498",
+            "roles": "m",
+            /* Coordination node settings */
+            "data_alias": "data",
+            "group_by": "species"
+        }
+    ]
+}

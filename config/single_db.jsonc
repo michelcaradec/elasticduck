@@ -1,0 +1,19 @@
+{
+    "nodes": [
+        {
+            /* Warning: as the name is used for the attached database, it must follows the rules: */
+            /* - https://duckdb.org/docs/current/sql/dialect/keywords_and_identifiers#database-names */
+            /* - https://duckdb.org/docs/current/sql/dialect/keywords_and_identifiers#identifiers */
+            "name": "single",
+            "port": "9494",
+            /* The node has both roles data and coordination */
+            "roles": "md",
+            /* Data node settings */
+            "data_alias": "data",
+            "data_source_type": "db",
+            "data_source": "iris.db",
+            /* Coordination node settings */
+            "group_by": "species"
+        }
+    ]
+}

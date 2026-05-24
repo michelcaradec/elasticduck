@@ -1,0 +1,42 @@
+{%- import 'utils.jinja' as utils -%}
+
+SET http_proxy = '{{ http_proxy }}';
+
+LOAD quack;
+
+{%- set node = nodes | selectattr('roles', 'eq', 'm') | first -%}
+
+{#- Get the data nodes -#}
+{{- utils.search_items(nodes, 'roles', 'd') -}}
+{%- set nodes_data = utils.ns.response -%}
+
+CALL enable_logging(
+    ['HTTP', 'Quack'],
+    storage = 'file',
+    storage_path = '{{ base_path }}/logs/duckdb-log-{{ node.name }}',
+    level = 'trace'
+);
+
+{% for node_data in nodes_data %}
+ATTACH 'quack:localhost:{{ node_data.port }}' AS {{ node_data.name }} (TOKEN '{{ token }}');
+{% endfor %}
+
+{%- if node.data_alias -%}
+    {#- Create the consolidated view -#}
+    {%- set ns = namespace(queries = []) -%}
+    {%- for name in nodes_data | map(attribute='name') -%}
+    {%- set ns.queries = ns.queries + [('FROM %s.' + node.data_alias) | format(name)] -%}
+    {%- endfor -%}
+    CREATE VIEW {{ node.data_alias }} AS {{ ns.queries | join(' UNION ALL ') }};
+
+    {#- Create the aggregated view -#}
+    CREATE VIEW {{ node.data_alias }}_agg AS
+    SELECT {{ node.group_by }}, avg(COLUMNS(* EXCLUDE ({{ node.group_by }})))
+    FROM {{ node.data_alias }}
+    GROUP BY {{ node.group_by }};
+{%- endif -%}
+
+CALL quack_serve(
+    'quack:localhost:{{ node.port }}',
+    token='{{ token }}'
+);

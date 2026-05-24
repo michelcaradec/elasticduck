@@ -1,0 +1,32 @@
+{%- import 'utils.jinja' as utils -%}
+
+SET http_proxy = '{{ http_proxy }}';
+
+LOAD quack;
+
+{#- Get the data nodes -#}
+{{- utils.search_items(nodes, 'roles', 'd') -}}
+{%- set nodes_data = utils.ns.response -%}
+
+{%- set node = nodes_data[((node_num | default(1)) | int) - 1] -%}
+
+CALL enable_logging(
+    ['HTTP', 'Quack'],
+    storage = 'file',
+    storage_path = '{{ base_path }}/logs/duckdb-log-{{ node.name }}',
+    level = 'trace'
+);
+
+{%- if node.data_source_type == 'csv' -%}
+    CREATE TABLE {{ node.data_alias }} AS
+    FROM read_csv('{{ base_path }}/data/{{ node.data_source }}')
+    {%- if node.partition -%}
+    WHERE {{ node.partition }}
+    {%- endif -%}
+    ;
+{%- endif -%}
+
+CALL quack_serve(
+    'quack:localhost:{{ node.port }}',
+    token='{{ token }}'
+);
