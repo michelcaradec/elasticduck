@@ -1,5 +1,7 @@
 # ElasticDuck
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/michelcaradec/elasticduck)
+
 <details>
 <summary>Table of contents</summary>
 
