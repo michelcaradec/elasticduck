@@ -439,9 +439,9 @@ In the request response below, taken on the coordination node (`quack:localhost:
 A cluster is composed of one or many nodes.  
 Every node is represented by a running [DuckDB CLI](https://duckdb.org/docs/current/clients/cli/overview) instance:
 
-- The **data nodes** host the data (different for each data node, acting like a partitions).
+- The **data nodes** host the data (different for each data node, acting like partitions).
 - A **coordination node** connects to the data nodes, and consolidate their data.
-- A **client node** connects to the coordination node, to access the data.
+- A **client node** connects to the coordination node, to query the data.
 
 Every data and coordination node runs in a **background process**, hosted by a [GNU Screen](https://www.gnu.org/software/screen/).  
 All together, they form the [cluster](#cluster-definition).
@@ -606,7 +606,7 @@ Let's play with a bigger data set in order to stress a bit more DuckDB, and obse
     ```
 
 5. Inspect the requests responses in the proxy:  
-    In the request response below, taken on the data node (`quack:localhost:9494`), we can see the numerous number of request with a response size of `48.4k`.
+    In the request response below, taken on the data node (`quack:localhost:9494`), we can see the numerous number of requests with a response size of `48.4k`.
 
     <details>
     <summary>Flow Details</summary>
